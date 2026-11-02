@@ -1,17 +1,20 @@
-.PHONY: install check format test test-cov clean docker-build docker-push deploy update-lambdas tf-init tf-plan tf-apply tf-destroy upload-data
+.PHONY: install check format test test-cov local-run clean docker-build docker-push deploy update-lambdas tf-init tf-plan tf-apply tf-destroy upload-data
 
 # --- Development ---
 install:
 	uv sync
 
 check:
-	uv run ruff check src/ tests/ && uv run ruff format --check src/ tests/
+	uv run ruff check src/ tests/ scripts/ && uv run ruff format --check src/ tests/ scripts/
 
 format:
-	uv run ruff check --fix src/ tests/ && uv run ruff format src/ tests/
+	uv run ruff check --fix src/ tests/ scripts/ && uv run ruff format src/ tests/ scripts/
 
 test:
 	uv run pytest tests/ -v
+
+local-run:  ## Run the 4 samples through the real state machine; S3 via moto, Bedrock faked
+	uv run python scripts/local_pipeline.py
 
 test-cov:
 	uv run pytest tests/ --cov=src --cov-report=term-missing

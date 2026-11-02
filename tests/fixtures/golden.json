@@ -1,0 +1,58 @@
+{
+  "airworthiness-directive": {
+    "document_type": "airworthiness_directive",
+    "extracted_fields": {
+      "ad_number": "2024-09-15",
+      "affected_aircraft": [
+        "Boeing 737-800 series, line numbers 3200 through 5400",
+        "Boeing 737-900ER series, line numbers 3800 through 4200"
+      ],
+      "compliance_deadline": "Within 18 months or 6,000 flight cycles after the effective date, whichever occurs first",
+      "required_action": "Detailed visual and high-frequency eddy current inspection of the wing front spar lower chord at WBL 160, repeated every 3,000 flight cycles; repair any cracking within 30 flight cycles."
+    }
+  },
+  "cybersecurity-advisory": {
+    "document_type": "cybersecurity_advisory",
+    "extracted_fields": {
+      "severity": "Critical",
+      "cve_ids": [
+        "CVE-2023-27997",
+        "CVE-2024-20359",
+        "CVE-2024-21887"
+      ],
+      "affected_products": [
+        "FortiGate SSL-VPN",
+        "Cisco ASA and FTD",
+        "Ivanti Connect Secure"
+      ],
+      "mitigation_steps": [
+        "Apply vendor-supplied patches immediately for all listed CVEs.",
+        "Reset all credentials that may have traversed compromised appliances.",
+        "Enable multi-factor authentication on all remote access points.",
+        "Monitor network traffic for indicators of compromise listed in Appendix A.",
+        "Segment network access to limit lateral movement from edge devices.",
+        "Review and restrict administrative access to management interfaces."
+      ]
+    }
+  },
+  "drug-approval": {
+    "document_type": "drug_approval",
+    "extracted_fields": {
+      "drug_name": "LUXTERA (miravimod)",
+      "indication": "Moderate-to-severe plaque psoriasis in adults who are candidates for systemic therapy or phototherapy",
+      "approval_date": "2024-06-15",
+      "applicant": "Meridian Pharmaceuticals Inc.",
+      "dosage": "Oral tablet, 6 mg and 12 mg; 6 mg once daily, may increase to 12 mg once daily after 16 weeks"
+    }
+  },
+  "financial-filing": {
+    "document_type": "financial_filing",
+    "extracted_fields": {
+      "company_name": "Meridian Technologies Inc.",
+      "filing_date": "2024-07-30",
+      "event_type": "8-K: Q2 2024 earnings results; agreement to acquire DataStream Analytics",
+      "revenue": 487300000,
+      "net_income": 62100000
+    }
+  }
+}
