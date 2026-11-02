@@ -17,8 +17,18 @@
         "title.$": "$.Payload.title",
         "content.$": "$.Payload.content",
         "source.$": "$.Payload.source",
+        "date.$": "$.Payload.date",
         "status.$": "$.Payload.status"
       },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0,
+          "JitterStrategy": "FULL"
+        }
+      ],
       "Next": "Classify"
     },
     "Classify": {
@@ -31,8 +41,26 @@
       "ResultPath": "$.classify_result",
       "ResultSelector": {
         "document_type.$": "$.Payload.document_type",
-        "confidence.$": "$.Payload.classification_confidence"
+        "confidence.$": "$.Payload.classification_confidence",
+        "evidence.$": "$.Payload.evidence"
       },
+      "Retry": [
+        {
+          "ErrorEquals": ["BedrockThrottlingError"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 5,
+          "BackoffRate": 2.0,
+          "MaxDelaySeconds": 60,
+          "JitterStrategy": "FULL"
+        },
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0,
+          "JitterStrategy": "FULL"
+        }
+      ],
       "Next": "Extract"
     },
     "Extract": {
@@ -40,13 +68,38 @@
       "Resource": "arn:aws:states:::lambda:invoke",
       "Parameters": {
         "FunctionName": "${extract_arn}",
-        "Payload.$": "$.preprocess_result"
+        "Payload": {
+          "document_id.$": "$.preprocess_result.document_id",
+          "title.$": "$.preprocess_result.title",
+          "source.$": "$.preprocess_result.source",
+          "date.$": "$.preprocess_result.date",
+          "content.$": "$.preprocess_result.content",
+          "document_type.$": "$.classify_result.document_type"
+        }
       },
       "ResultPath": "$.extract_result",
       "ResultSelector": {
         "extracted_fields.$": "$.Payload.extracted_fields",
-        "confidence.$": "$.Payload.extraction_confidence"
+        "confidence.$": "$.Payload.extraction_confidence",
+        "missing_fields.$": "$.Payload.missing_fields"
       },
+      "Retry": [
+        {
+          "ErrorEquals": ["BedrockThrottlingError"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 5,
+          "BackoffRate": 2.0,
+          "MaxDelaySeconds": 60,
+          "JitterStrategy": "FULL"
+        },
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0,
+          "JitterStrategy": "FULL"
+        }
+      ],
       "Next": "Aggregate"
     },
     "Aggregate": {
@@ -61,6 +114,15 @@
         "document_type.$": "$.Payload.document_type",
         "status.$": "$.Payload.status"
       },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0,
+          "JitterStrategy": "FULL"
+        }
+      ],
       "End": true
     }
   }
