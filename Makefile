@@ -35,15 +35,16 @@ deploy: docker-build docker-push
 	@echo "Image pushed. Run 'make update-lambdas' to update the Lambda functions."
 
 update-lambdas:
-	@ECR_REPO=$$(cd terraform/live/candidate && terraform output -raw ecr_repository_url) && \
+	@set -e; \
+	ECR_REPO=$$(cd terraform/live/candidate && terraform output -raw ecr_repository_url); \
 	for fn in preprocess classify extract aggregate; do \
-		FUNC_NAME=$$(cd terraform/live/candidate && terraform output -raw $${fn}_lambda_name 2>/dev/null || echo ""); \
-		if [ -n "$$FUNC_NAME" ]; then \
-			echo "Updating $$FUNC_NAME..."; \
-			aws lambda update-function-code --function-name "$$FUNC_NAME" --image-uri "$$ECR_REPO:latest" > /dev/null; \
-		fi; \
-	done
-	@echo "Lambda functions updated."
+		FUNC_NAME=$$(cd terraform/live/candidate && terraform output -raw $${fn}_lambda_name); \
+		if [ -z "$$FUNC_NAME" ]; then echo "ERROR: no Terraform output $${fn}_lambda_name" >&2; exit 1; fi; \
+		echo "Updating $$FUNC_NAME..."; \
+		aws lambda update-function-code --function-name "$$FUNC_NAME" --image-uri "$$ECR_REPO:latest" > /dev/null; \
+		aws lambda wait function-updated --function-name "$$FUNC_NAME"; \
+	done; \
+	echo "Lambda functions updated."
 
 # --- Terraform ---
 tf-init:

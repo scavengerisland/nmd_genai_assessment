@@ -17,3 +17,24 @@ output "eventbridge_rule_name" {
   description = "EventBridge rule name"
   value       = module.eventbridge.rule_name
 }
+
+# Read by `make update-lambdas`.
+output "preprocess_lambda_name" {
+  description = "Preprocess Lambda function name"
+  value       = module.lambda.preprocess_name
+}
+
+output "classify_lambda_name" {
+  description = "Classify Lambda function name"
+  value       = module.lambda.classify_name
+}
+
+output "extract_lambda_name" {
+  description = "Extract Lambda function name"
+  value       = module.lambda.extract_name
+}
+
+output "aggregate_lambda_name" {
+  description = "Aggregate Lambda function name"
+  value       = module.lambda.aggregate_name
+}
