@@ -27,7 +27,7 @@ def preprocess_document(event: dict) -> dict:
     doc = json.loads(raw)
 
     return {
-        "document_id": s3_key.split("/")[-1].replace(".json", ""),
+        "document_id": document_id_from_key(s3_key),
         "s3_bucket": s3_bucket,
         "s3_key": s3_key,
         "title": doc.get("title", ""),
@@ -36,3 +36,8 @@ def preprocess_document(event: dict) -> dict:
         "date": doc.get("date", ""),
         "status": "preprocessed",
     }
+
+
+def document_id_from_key(s3_key: str) -> str:
+    """Return the file name without its .json suffix: uploads/a.json.v2.json -> a.json.v2."""
+    return s3_key.rsplit("/", 1)[-1].removesuffix(".json")
