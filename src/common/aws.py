@@ -20,9 +20,15 @@ def get_s3_client():
     return get_session().client("s3")
 
 
+@lru_cache
 def get_bedrock_client():
-    """Get Bedrock Runtime client with extended timeout."""
+    """Get a cached Bedrock Runtime client with extended timeout.
+
+    Caching keeps adaptive retry state across calls in a warm Lambda. Retries
+    stay low on purpose: Step Functions retries throttles with backoff, and SDK
+    retries multiply with them.
+    """
     return get_session().client(
         "bedrock-runtime",
-        config=Config(read_timeout=180, retries={"max_attempts": 3, "mode": "adaptive"}),
+        config=Config(read_timeout=180, retries={"max_attempts": 2, "mode": "adaptive"}),
     )
