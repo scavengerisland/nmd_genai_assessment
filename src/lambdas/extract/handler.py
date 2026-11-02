@@ -2,8 +2,10 @@
 
 import logging
 
+from common.log import configure_logging
 from tasks.extract import extract_fields
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 

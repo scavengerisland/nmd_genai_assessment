@@ -2,8 +2,10 @@
 
 import logging
 
+from common.log import configure_logging
 from tasks.preprocess import preprocess_document
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 
